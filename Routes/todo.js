@@ -152,12 +152,13 @@ router.get('/avg', async (req, res) => {
 
         // Execute ClickHouse query to fetch messages for the specified user_id
         const result = await clickhouse.query(`SELECT message FROM sampletable WHERE user_id = '${user_id}'`).toPromise();
+           const singlearray = result.map(obj=>obj.message)
 
-   
+        console.log(singlearray)
       
 
         // Send the messages back to the client as a JSON array
-        res.status(200).json(result);
+        res.status(200).json(singlearray);
     } catch (err) {
         console.error(err);
         res.status(500).json({
