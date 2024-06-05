@@ -167,5 +167,28 @@ router.get('/avg', async (req, res) => {
     }
 });
 
+//getting total user
+router.get('/totaluser', async (req, res) => {
+    try {
+        // Execute ClickHouse query to get total user count
+        const result = await clickhouse.query('SELECT COUNT() AS total_user_count FROM sampletable').toPromise();
+
+        // Extract the total user count from the result
+        const totalUserCount = result[0].total_user_count;
+
+        // Log the total user count to the console for debugging
+        console.log('Total user count:', totalUserCount);
+
+        // Send the total user count back to the client as a JSON response
+        res.status(200).json({
+            total_user_count: totalUserCount
+        });
+    } catch (err) {
+        console.error('Error getting user count:', err);
+        res.status(500).json({
+            error: "Error getting user count"
+        });
+    }
+});
 
 module.exports = router;
