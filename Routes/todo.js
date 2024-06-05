@@ -109,22 +109,30 @@ router.put('/todosupdate/:user_id', async (req, res) => {
 router.get('/avg', async (req, res) => {
     try {
         // Execute ClickHouse query to calculate average metric
-        const result = await clickhouse.query('SELECT avg(metric) FROM sampletable').toPromise();
+        const result = await clickhouse.query('SELECT avg(metric) AS avg_metric FROM sampletable').toPromise();
+             console.log(result)
+        // Extract the average metric value from the result
+        const avgMetric = result[0].avg_metric;
+
+        // Double the average metric value
+        const doubledAvgMetric = avgMetric * 2;
 
         // Log the result to the console for debugging
-        console.log(result);
+        console.log(`Original average: ${avgMetric}, Doubled average: ${doubledAvgMetric}`);
 
-        // Send the average value back to the client as JSON response
+        // Send both the normal and doubled average values back to the client as JSON response
         res.status(200).json({
-            avg: result[0]['avg(metric)'] // Assuming the result is an array and the average is returned as 'avg(metric)'
+            avg: avgMetric,
+            doubled_avg: doubledAvgMetric
         });
     } catch (err) {
         console.error(err);
         res.status(500).json({
-            error: "Error getting average"
+            error: "Error getting or doubling average"
         });
     }
 });
+
  // getting indiviual user message
 
  router.get('/messages/:user_id', async (req, res) => {
